@@ -5,6 +5,7 @@ import path from 'path';
 import { tmpdir } from 'os';
 
 const CLI_PATH = path.resolve('./index.js');
+const pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), 'utf8'));
 let tempBinDir;
 let oldPath;
 
@@ -79,7 +80,7 @@ if (args.includes('--output-format') && args.includes('json')) {
 
   it('should report version correctly', async () => {
     const { stdout } = await runCLI(['--version']);
-    expect(stdout.trim()).toBe('0.5.4');
+    expect(stdout.trim()).toBe(pkg.version);
   }, 30000);
 
   it('should run in a temporary directory for isolation by default', async () => {

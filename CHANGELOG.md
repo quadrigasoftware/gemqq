@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.5] - 2026-02-19
+
+### Changed
+- Dropped support for Node.js 18.x. Minimum required version is now Node.js 20.0.0.
+- Updated GitHub Actions test matrix to exclude Node.js 18.
+
+## [0.5.4] - 2026-02-19
+
+### Added
+- GitHub Actions CI workflow for automated testing.
+- Enhanced README with status badges and improved examples.
+
+### Changed
+- Refactored `index.js` for better internal organization and modularity.
+
+### Fixed
+- Robust cleanup of temporary isolation directories.
+- Improved signal handling for `SIGINT` and `SIGTERM`.
+
 ## [0.5.3] - 2026-02-19
 
 ### Added
