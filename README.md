@@ -1,6 +1,9 @@
 # gemqq
 
-Gemini Quick Question is a one-shot CLI wrapper for Google's Gemini, featuring interactive editor support, markdown rendering, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' and prompts.
+[![npm version](https://img.shields.io/npm/v/@quadrigasoftware/gemqq.svg)](https://www.npmjs.com/package/@quadrigasoftware/gemqq)
+[![Build Status](https://github.com/quadrigasoftware/gemqq/actions/workflows/test.yml/badge.svg)](https://github.com/quadrigasoftware/gemqq/actions)
+
+Gemini Quick Question is a one-shot wrapper for gemini-cli featuring interactive editor support, markdown rendering in terminal, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' quickly.
 
 ## Installation
 
@@ -46,12 +49,13 @@ If you need Gemini to analyze your codebase or reference local files, use the `-
 
 ### Examples
 
-```bash
-gemqq Who made liquid soap and why?
-cat file.txt | gemqq Summarize this
+```terminaloutput
+gemqq difference between gemini 3.0, 3.1. make a table
+cat file.txt | gemqq summarize this
 gemqq -e --pro
-gemqq Draft an email -c
-gemqq Explain recursion --style dark
+gemqq C++ operator precedence and keywords
+gemqq how do I update git submodules in parent
+gemqq --pro "Analyze the subtext of Roy's final speech in Blade Runner"
 ```
 
 > **Note:** Prompts do not require quotes unless they contain special shell characters like `?`, `*`, `&`, `;`, or `|`. If your prompt includes these, you should either quote it or escape the characters.

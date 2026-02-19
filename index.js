@@ -33,7 +33,7 @@ const hasGemini = commandExists('gemini');
 
 program
   .name('gemqq')
-  .description("Gemini Quick Question is a one-shot CLI wrapper for Google's Gemini, featuring interactive editor support, markdown rendering, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' and prompts.")
+  .description("Gemini Quick Question is a one-shot wrapper for gemini-cli featuring interactive editor support, markdown rendering in terminal, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' quickly.")
   .version('0.5.3')
   .argument('[prompt...]', 'Prompt for the model')
   .option('-e, --edit', 'Open prompt in default editor')
@@ -46,8 +46,43 @@ program
   .option('--pro', 'Use gemini-3-pro-preview model')
   .option('--flash', 'Use gemini-3-flash-preview model (Default)')
   .option('--debug', 'Enable debug mode')
+  .addHelpText('after', `
+Examples:
+  gemqq difference between gemini 3.0, 3.1. make a table
+  cat file.txt | gemqq summarize this
+  gemqq -e --pro
+  gemqq C++ operator precedence and keywords
+  gemqq how do I update git submodules in parent
+  gemqq --pro "Analyze the subtext of Roy's final speech in Blade Runner"
+`)
   .action(async (promptParts, options) => {
+    let currentTempDir = null;
+    let currentSpinner = null;
+    const isTest = process.env.NODE_ENV === 'test';
+
+    const cleanup = () => {
+      if (currentSpinner && !isTest) {
+        currentSpinner.stop();
+      }
+      if (currentTempDir && fs.existsSync(currentTempDir)) {
+        try {
+          fs.rmSync(currentTempDir, { recursive: true, force: true });
+        } catch (e) {}
+      }
+    };
+
+    const signalHandler = () => {
+      cleanup();
+      process.exit(130);
+    };
+
+    process.on('SIGINT', signalHandler);
+    process.on('SIGTERM', signalHandler);
+
     if (!hasGemini) {
+      cleanup();
+      process.off('SIGINT', signalHandler);
+      process.off('SIGTERM', signalHandler);
       console.error(chalk.bold('Error:') + " 'gemini' CLI not found.");
       console.error("Please install it using npm:\n");
       console.error(chalk.bold("  npm install -g @google/gemini-cli\n"));
@@ -126,49 +161,19 @@ ${editedPrompt}
       console.error(chalk.bold('[DEBUG] Executing:') + ` gemini ${args.map(a => `'${a}'`).join(' ')}`);
     }
 
-    const isTest = process.env.NODE_ENV === 'test';
-    const spinner = isTest ? { start: () => spinner, stop: () => {} } : ora('Gemini is thinking...').start();
+    currentSpinner = isTest ? { start: () => currentSpinner, stop: () => {} } : ora('Gemini is thinking...').start();
     const startTime = Date.now();
 
-    /**
-     * BYPASS LOGIC: Reducing Context Snapshot Size
-     * 
-     * By default, the Gemini CLI snapshots the entire current directory tree and environment
-     * which can send thousands of tokens for even a simple prompt.
-     * 
-     * We bypass this by overriding the default system prompt using the GEMINI_SYSTEM_MD
-     * environment variable. This variable must point to a file.
-     * 
-     * If the user provides the --project flag, we skip this override to allow the 
-     * CLI to send full workspace context (useful for codebase questions).
-     * 
-     * Additionally, we execute Gemini in a temporary directory to isolate file 
-     * context to zero when not in --project mode.
-     */
     let sysPromptFile = null;
-    let tempDir = null;
     if (!options.project) {
       try {
-        tempDir = fs.mkdtempSync(path.join(tmpdir(), 'gemqq-run-'));
-        sysPromptFile = path.join(tempDir, `gemqq-sysprompt-${Date.now()}.md`);
+        currentTempDir = fs.mkdtempSync(path.join(tmpdir(), 'gemqq-run-'));
+        sysPromptFile = path.join(currentTempDir, `gemqq-sysprompt-${Date.now()}.md`);
         fs.writeFileSync(sysPromptFile, 'You are a helpful AI assistant. Answer the user\'s prompt concisely. Do not tell me what you are doing. Do not use this directory or any local context. Do not upload any local context.');
       } catch (e) {
         if (options.debug) console.error(chalk.red('[DEBUG] Failed to create isolation directory:'), e);
       }
     }
-
-    // Signal handler for immediate termination and cleanup
-    const signalHandler = () => {
-      if (!isTest) spinner.stop();
-      if (tempDir && fs.existsSync(tempDir)) {
-        try {
-          fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch (e) {}
-      }
-      process.exit(130);
-    };
-    process.on('SIGINT', signalHandler);
-    process.on('SIGTERM', signalHandler);
 
     try {
       const execEnv = { 
@@ -183,17 +188,10 @@ ${editedPrompt}
 
       const { stdout, stderr } = await execa('gemini', args, {
         env: execEnv,
-        cwd: tempDir || process.cwd()
+        cwd: currentTempDir || process.cwd()
       });
 
-      spinner.stop();
-      if (tempDir && fs.existsSync(tempDir)) {
-        try {
-          fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch (e) {}
-      }
-      process.off('SIGINT', signalHandler);
-      process.off('SIGTERM', signalHandler);
+      cleanup();
 
       if (stderr) {
         const filteredStderr = stderr
@@ -272,14 +270,11 @@ ${editedPrompt}
         }
       }
     } catch (error) {
-      spinner.stop();
-      if (tempDir && fs.existsSync(tempDir)) {
-        try {
-          fs.rmSync(tempDir, { recursive: true, force: true });
-        } catch (e) {}
+      cleanup();
+
+      if (error.signal === 'SIGINT' || error.signal === 'SIGTERM') {
+        process.exit(130);
       }
-      process.off('SIGINT', signalHandler);
-      process.off('SIGTERM', signalHandler);
 
       // Filter stderr similar to bash script
       const filteredStderr = (error.stderr || '')

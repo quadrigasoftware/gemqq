@@ -1,6 +1,6 @@
 {
   "name": "@quadrigasoftware/gemqq",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Gemini Quick Question is a one-shot CLI wrapper for Google's Gemini, featuring interactive editor support, markdown rendering, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' and prompts.",
   "main": "index.js",
   "bin": {
@@ -15,6 +15,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quadrigasoftware/gemqq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quadrigasoftware/gemqq/issues"
+  },
+  "homepage": "https://github.com/quadrigasoftware/gemqq#readme",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -23,12 +31,20 @@
   },
   "keywords": [
     "gemini",
+    "google-gemini",
     "cli",
     "ai",
-    "wrapper"
+    "llm",
+    "wrapper",
+    "markdown",
+    "terminal",
+    "productivity",
+    "developer-tools",
+    "one-shot"
   ],
   "author": "Charles McBrian",
   "license": "MIT",
+  "sideEffects": false,
   "dependencies": {
     "chalk": "^5.6.2",
     "clipboardy": "^5.3.0",
