@@ -1,6 +1,6 @@
 # gemqq
 
-[![npm version](https://img.shields.io/npm/v/@quadrigasoftware/gemqq.svg)](https://www.npmjs.com/package/@quadrigasoftware/gemqq)
+[![npm version](https://img.shields.io/npm/v/gemqq.svg)](https://www.npmjs.com/package/gemqq)
 [![Build Status](https://github.com/quadrigasoftware/gemqq/actions/workflows/test.yml/badge.svg)](https://github.com/quadrigasoftware/gemqq/actions)
 
 Gemini Quick Question is a one-shot wrapper for gemini-cli featuring interactive editor support, markdown rendering in terminal, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' quickly.
@@ -8,7 +8,7 @@ Gemini Quick Question is a one-shot wrapper for gemini-cli featuring interactive
 ## Installation
 
 ```bash
-npm install -g @quadrigasoftware/gemqq
+npm install -g gemqq
 ```
 
 ## Usage
