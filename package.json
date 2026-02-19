@@ -1,0 +1,42 @@
+{
+  "name": "@quadrigasoftware/gemqq",
+  "version": "0.5.3",
+  "description": "Gemini Quick Question is a one-shot CLI wrapper for Google's Gemini, featuring interactive editor support, markdown rendering, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' and prompts.",
+  "main": "index.js",
+  "bin": {
+    "gemqq": "index.js"
+  },
+  "type": "module",
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "keywords": [
+    "gemini",
+    "cli",
+    "ai",
+    "wrapper"
+  ],
+  "author": "Charles McBrian",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "clipboardy": "^5.3.0",
+    "commander": "^14.0.3",
+    "execa": "^9.6.1",
+    "ora": "^9.3.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.18"
+  }
+}
