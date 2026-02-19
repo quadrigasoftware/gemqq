@@ -79,7 +79,7 @@ if (args.includes('--output-format') && args.includes('json')) {
 
   it('should report version correctly', async () => {
     const { stdout } = await runCLI(['--version']);
-    expect(stdout.trim()).toBe('0.5.3');
+    expect(stdout.trim()).toBe('0.5.4');
   }, 30000);
 
   it('should run in a temporary directory for isolation by default', async () => {

@@ -34,7 +34,7 @@ const hasGemini = commandExists('gemini');
 program
   .name('gemqq')
   .description("Gemini Quick Question is a one-shot wrapper for gemini-cli featuring interactive editor support, markdown rendering in terminal, and real-time token usage statistics. gemqq does not have memory nor context, it simply answers your 'quick questions' quickly.")
-  .version('0.5.3')
+  .version('0.5.4')
   .argument('[prompt...]', 'Prompt for the model')
   .option('-e, --edit', 'Open prompt in default editor')
   .option('-r, --raw', 'Output raw text (disable markdown rendering)')
