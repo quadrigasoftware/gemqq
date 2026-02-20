@@ -68,6 +68,18 @@ The project includes automated integration and unit tests using [Vitest](https:/
 npm test
 ```
 
+## Contributing
+
+I am currently not accepting external code contributions (Pull Requests) while I focus on the initial development. However, suggestions, bug reports, and feedback are very welcome!
+
+Please feel free to:
+- Open a [Discussion](https://github.com/quadrigasoftware/gemqq/discussions) for ideas and feedback.
+- Open an [Issue](https://github.com/quadrigasoftware/gemqq/issues) to report bugs.
+
+## Support
+
+If you find this tool useful and would like to support its development, you can [buy me a coffee](https://buymeacoffee.com/type_safe).
+
 ## Dependencies
 
 - [Gemini CLI](https://github.com/google/gemini-cli)

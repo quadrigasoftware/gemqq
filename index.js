@@ -57,6 +57,10 @@ Examples:
   gemqq C++ operator precedence and keywords
   gemqq how do I update git submodules in parent
   gemqq --pro "Analyze the subtext of Roy's final speech in Blade Runner"
+
+Support:
+  If you find gemqq useful, you can support its development at:
+  https://buymeacoffee.com/type_safe
 `)
   .action(async (promptParts, options) => {
     let currentTempDir = null;
