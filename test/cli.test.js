@@ -84,6 +84,13 @@ if (args.includes('--output-format') && args.includes('json')) {
     expect(stdout).toContain('Usage: gemqq');
     expect(stdout).toContain('--style');
     expect(stdout).toContain('--no-stats');
+    expect(stdout).toContain('--browser');
+  }, 30000);
+
+  it('should suppress terminal output when --browser is used', async () => {
+    // Note: We can't easily test the browser opening itself, but we can check that stdout is empty
+    const { stdout } = await runCLI(['test', '--browser', '--no-stats']);
+    expect(stdout.trim()).toBe('');
   }, 30000);
 
   it('should report version correctly', async () => {
@@ -104,5 +111,19 @@ if (args.includes('--output-format') && args.includes('json')) {
     // In some environments, the path might be slightly different due to symlinks (e.g. /var vs /private/var on macOS)
     // but it should definitely contain a significant part of the current path and not gemqq-run-
     expect(stdout).not.toContain('gemqq-run-');
+  }, 30000);
+
+  it('should report error when gemini is not found in PATH', async () => {
+    const emptyDir = fs.mkdtempSync(path.join(tmpdir(), 'gemqq-empty-'));
+    try {
+      const { exitCode, stderr } = await execa(process.execPath, [CLI_PATH, 'hello'], {
+        env: { ...process.env, NODE_ENV: 'test', PATH: emptyDir },
+        reject: false
+      });
+      expect(exitCode).toBe(1);
+      expect(stderr).toContain("'gemini' CLI not found");
+    } finally {
+      fs.rmSync(emptyDir, { recursive: true, force: true });
+    }
   }, 30000);
 });

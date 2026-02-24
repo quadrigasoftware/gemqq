@@ -14,6 +14,8 @@ import fs from 'fs';
 import path from 'path';
 import { tmpdir } from 'os';
 import { spawnSync, spawn } from 'child_process';
+import { marked } from 'marked';
+import open from 'open';
 
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
@@ -24,8 +26,8 @@ const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'ut
 // Helper to check command existence
 function commandExists(cmd) {
   try {
-    spawnSync(cmd, ['--version'], { stdio: 'ignore' });
-    return true;
+    const result = spawnSync(cmd, ['--version'], { stdio: 'ignore' });
+    return !result.error;
   } catch (e) {
     return false;
   }
@@ -43,6 +45,7 @@ program
   .option('-r, --raw', 'Output raw text (disable markdown rendering)')
   .option('-j, --json', 'Output response as JSON')
   .option('-c, --copy', 'Copy response to system clipboard')
+  .option('-b, --browser', 'Open response in default web browser')
   .option('-m, --model <name>', 'Specify a custom model')
   .option('--style <name>', 'Specify a glow style (e.g., auto, dark, light)', 'auto')
   .option('--no-stats', 'Do not show token usage statistics')
@@ -266,7 +269,47 @@ ${editedPrompt}
         console.error(chalk.gray(statusMsg));
       }
 
-      if (options.raw || !hasGlow) {
+      if (options.browser) {
+        try {
+          const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gemini Response</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css">
+  <style>
+    body {
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 45px;
+    }
+    @media (max-width: 767px) {
+      .markdown-body {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body class="markdown-body">
+  <div style="margin-bottom: 2em; padding-bottom: 0.5em; border-bottom: 1px solid #eaecef; color: #6a737d; font-size: 0.85em; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+    ${statusMsg.trim().replace(/^\(|\)$/g, '')}
+  </div>
+  ${await marked.parse(modelOutput)}
+</body>
+</html>`;
+          const tmpHtmlFile = path.join(tmpdir(), `gemqq-response-${Date.now()}.html`);
+          fs.writeFileSync(tmpHtmlFile, htmlContent);
+          await open(tmpHtmlFile);
+          console.error(chalk.cyan(`Output opened in browser: ${tmpHtmlFile}`));
+          if (options.debug) console.error(chalk.gray(`[DEBUG] Opened in browser: ${tmpHtmlFile}`));
+        } catch (e) {
+          console.error(chalk.red('\nFailed to open browser:'), e.message);
+        }
+      } else if (options.raw || !hasGlow) {
         process.stdout.write(modelOutput);
       } else {
         // Render with glow
