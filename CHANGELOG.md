@@ -5,10 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.12] - 2026-02-24
 
 ### Added
-- `--json` flag for raw JSON output.
+- `-b, --browser` flag to open AI responses in the default web browser with GitHub-style Markdown formatting.
+- Token usage statistics and timing information are now included at the top of the browser output.
+- New dependencies: `marked` (Markdown parsing) and `open` (cross-platform browser launching).
+
+### Fixed
+- Improved `commandExists` logic to correctly detect when the `gemini` CLI is missing from the system PATH.
+- Refined terminal output to inform users when responses are opened in a browser while suppressing redundant terminal rendering.
+
+## [Unreleased]
 
 ## [0.5.10] - 2026-02-19
 
