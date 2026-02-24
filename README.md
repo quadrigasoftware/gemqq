@@ -21,6 +21,7 @@ gemqq [OPTIONS] [PROMPT...]
 
 - `-e, --edit`: Open prompt in default editor (`EDITOR` or `VISUAL`).
 - `-r, --raw`: Output raw text (disable markdown rendering via `glow`).
+- `-j, --json`: Output response as JSON.
 - `-c, --copy`: Copy response to system clipboard.
 - `-m, --model NAME`: Specify a custom model.
 - `--style NAME`: Specify a `glow` style (e.g., `auto`, `dark`, `light`). Default is `auto`.

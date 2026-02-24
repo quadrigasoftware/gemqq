@@ -41,6 +41,7 @@ program
   .argument('[prompt...]', 'Prompt for the model')
   .option('-e, --edit', 'Open prompt in default editor')
   .option('-r, --raw', 'Output raw text (disable markdown rendering)')
+  .option('-j, --json', 'Output response as JSON')
   .option('-c, --copy', 'Copy response to system clipboard')
   .option('-m, --model <name>', 'Specify a custom model')
   .option('--style <name>', 'Specify a glow style (e.g., auto, dark, light)', 'auto')
@@ -168,7 +169,8 @@ ${editedPrompt}
       console.error(chalk.bold('[DEBUG] Executing:') + ` gemini ${args.map(a => `'${a}'`).join(' ')}`);
     }
 
-    currentSpinner = isTest ? { start: () => currentSpinner, stop: () => {} } : ora('Gemini is thinking...').start();
+    const shouldShowSpinner = !options.json && !isTest;
+    currentSpinner = shouldShowSpinner ? ora('Gemini is thinking...').start() : { start: () => currentSpinner, stop: () => {} };
     const startTime = Date.now();
 
     let sysPromptFile = null;
@@ -199,6 +201,11 @@ ${editedPrompt}
       });
 
       cleanup();
+
+      if (options.json) {
+        process.stdout.write(stdout);
+        return;
+      }
 
       if (stderr) {
         const filteredStderr = stderr

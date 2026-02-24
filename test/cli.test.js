@@ -71,6 +71,14 @@ if (args.includes('--output-format') && args.includes('json')) {
     expect(stdout.trim()).toContain('Tools: ["*"]');
   }, 30000);
 
+  it('should provide json output with --json', async () => {
+    const { stdout, stderr } = await runCLI(['test', '--json']);
+    const result = JSON.parse(stdout);
+    expect(result).toHaveProperty('response');
+    expect(result.response).toContain('Mocked response');
+    expect(stderr).toBe('');
+  }, 30000);
+
   it('should show help message', async () => {
     const { stdout } = await runCLI(['--help']);
     expect(stdout).toContain('Usage: gemqq');
